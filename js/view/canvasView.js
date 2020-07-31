@@ -1,4 +1,4 @@
-export default class canvasView {
+export default class CanvasView {
 
     HEIGHT = 400;
     WIDTH = 800;

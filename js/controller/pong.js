@@ -9,9 +9,10 @@ export default class Pong {
     net;
     leftPaddle;
     rightPaddle;
+    view;
 
     constructor() {
-        this.view = new CanvasView();
+        this.view = new CanvasView(this);
 
         const viewWidth = this.view.getWidth();
         const viewHeight = this.view.getHeight();
@@ -59,6 +60,15 @@ export default class Pong {
         this.ball.move();
         this.leftPaddle.move(DIRECTION.UP);
         this.rightPaddle.move(DIRECTION.DOWN);
-
     }
+
+    setLeftPaddleDirection(direction) {
+        this.leftPaddle.setDirection(direction);
+    }
+
+    setRightPaddleDirection(direction) {
+        this.rightPaddle.setDirection(direction);
+    }
+
+
 }

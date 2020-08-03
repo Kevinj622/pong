@@ -16,13 +16,13 @@ class Paddle {
         this.height = canvasHeight * .1; //10% of the view height
         this.width = canvasWidth * .01; //1% of the width
         this.yPos = (canvasHeight / 2) - (this.height / 2);
-        this.speed = 5; //TODO make responsive
+        this.speed = 8; //TODO make responsive
     }
 
     move() {
         const topEdgePos = 0;
         const bottomEdgePos = this.canvasHeight;
-        
+
        if (this.direction === DIRECTION.UP) {
            if(this.yPos > (topEdgePos + this.speed)) {
                this.yPos -= this.speed;
@@ -40,7 +40,6 @@ class Paddle {
     setDirection(direction) {
         this.direction = direction;
     }
-
 }
 
 export class LeftPaddle extends Paddle {

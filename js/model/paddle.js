@@ -1,6 +1,6 @@
 import DIRECTION from '../model/direction.js'
 class Paddle {
-
+    canvasHeight;
     color;
     direction;
     height;
@@ -10,6 +10,7 @@ class Paddle {
     yPos;
 
     constructor (canvasWidth, canvasHeight) {
+        this.canvasHeight = canvasHeight;
         this.color = 'rgb(255, 255, 255)';
         this.direction = DIRECTION.NONE;
         this.height = canvasHeight * .1; //10% of the view height
@@ -19,10 +20,21 @@ class Paddle {
     }
 
     move() {
+        const topEdgePos = 0;
+        const bottomEdgePos = this.canvasHeight;
+        
        if (this.direction === DIRECTION.UP) {
-           this.yPos -= this.speed;
+           if(this.yPos > (topEdgePos + this.speed)) {
+               this.yPos -= this.speed;
+           } else if (this.yPos > topEdgePos) {
+               this.yPos = topEdgePos;
+           }
        } else if (this.direction === DIRECTION.DOWN) {
-           this.yPos += this.speed;
+           if(this.yPos < (bottomEdgePos - this.height - this.speed)) {
+               this.yPos += this.speed;
+           } else if (this.yPos < (bottomEdgePos - this.height)) {
+               this.yPos = bottomEdgePos - this.height;
+           }
        }
     }
     setDirection(direction) {

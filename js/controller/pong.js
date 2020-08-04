@@ -62,18 +62,40 @@ export default class Pong {
         this.leftPaddle.move(DIRECTION.UP);
         this.rightPaddle.move(DIRECTION.DOWN);
 
-        if (this.didBallCollideWithBoundary(this.ball.getYPos(), this.view.getHeight(), 0)) {
+        if (this.didBallCollideWithBoundary(this.ball, this.view.getHeight(), 0)) {
             this.ball.reverseY();
         } 
+
+        if (this.didLeftPaddleHitBall(this.ball, this.leftPaddle) || this.didRightPaddleHitBall(this.ball, this.rightPaddle)) {
+            this.ball.reverseX();
+        }
     }
 
     didBallCollideWithBoundary(ball, lowerBoundaryYPos, upperBoundaryYPos) {
 
-        const ballYPos = this.ball.getYPos();
-        const ballRadius = this.ball.getRadius();
-        return (ballYPos + ballRadius) >= lowerBoundaryYPos || (ballYPos - ballRadius) <= upperBoundaryYPos;
+        return ball.getBottomEdge() >= lowerBoundaryYPos || ball.getTopEdge() <= upperBoundaryYPos;
       
     }
+
+    didLeftPaddleHitBall(ball, paddle) {
+
+        return (ball.getDX() < 0 //Left paddle
+        && ball.getLeftEdge() >= paddle.getLeftEdge() 
+        && ball.getLeftEdge() <= paddle.getRightEdge() 
+        && ball.getYPos() >= paddle.getTopEdge()
+        && ball.getYPos() <= paddle.getBottomEdge());
+
+    }
+
+    didRightPaddleHitBall(ball, paddle) {
+
+        return (ball.getDX() > 0    //Right paddle
+            && ball.getRightEdge() >= paddle.getLeftEdge() 
+            && ball.getRightEdge() <= paddle.getRightEdge() 
+            && ball.getYPos() >= paddle.getTopEdge()
+            && ball.getYPos() <= paddle.getBottomEdge());
+    }
+
 
     setLeftPaddleDirection(direction) {
         this.leftPaddle.setDirection(direction);

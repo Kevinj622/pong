@@ -3,13 +3,20 @@ import Net from '../model/net.js'
 import {LeftPaddle, RightPaddle} from '../model/paddle.js'
 import CanvasView from '../view/canvasView.js';
 import DIRECTION from '../model/direction.js';
+import Player from '../model/player.js';
 
 export default class Pong {
+    WINNING_SCORE = 1;
     ball;
     net;
     leftPaddle;
     rightPaddle;
+    leftPlayer;
+    rightPlayer;
+
     view;
+
+    isGamePaused;
 
     constructor() {
         this.view = new CanvasView(this);
@@ -21,22 +28,28 @@ export default class Pong {
         this.net = new Net(viewWidth, viewHeight);
         this.leftPaddle = new LeftPaddle(viewWidth, viewHeight);
         this.rightPaddle = new RightPaddle(viewWidth, viewHeight);
-        
-        
+        this.leftPlayer = new Player(this.leftPaddle, this.WINNING_SCORE);
+        this.rightPlayer = new Player(this.rightPaddle), this.WINNING_SCORE;
+
+        this.pauseGame();
         this.draw();
-        this.loop();
+      
     }
 
     isGameStopped () {
-        return false;
+        return this.isGamePaused || this.isGameOver();
+    }
+
+    isGameOver() {
+        return this.leftPlayer.hasWon()  || this.rightPlayer.hasWon();
     }
 
     draw() {
         this.view.draw(
             this.ball,
             this.net,
-            this.leftPaddle,
-            this.rightPaddle
+            this.leftPlayer,
+            this.rightPlayer
             );
     }
 
@@ -45,28 +58,50 @@ export default class Pong {
         this.update();
         //redraw the screen
         this.draw();
-
         if (!this.isGameStopped()) {
             //this takes in an argument that runs on a certain frequency taken in as an argument.
             window.requestAnimationFrame(() => {
                 this.loop();
             })
-       
         }
     }
 
-    update() {
+    pauseGame() {
+        this.isGamePaused = true;
+    }
 
+    unpauseGame() {
+        if (this.isGameOver()) {
+            this.isGamePaused = false;
+            this.leftPlayer.resetScore();
+            this.rightPlayer.resetScore();
+            this.loop();
+        }
+        else if (this.isGamePaused) {
+            this.isGamePaused = false;
+            this.loop();
+        } 
+    }
+
+    update() {
    
         this.ball.move();
         this.leftPaddle.move(DIRECTION.UP);
         this.rightPaddle.move(DIRECTION.DOWN);
-
+        
         if (this.didBallCollideWithBoundary(this.ball, this.view.getHeight(), 0)) {
             this.ball.reverseY();
-        } 
-
-        if (this.didLeftPaddleHitBall(this.ball, this.leftPaddle) || this.didRightPaddleHitBall(this.ball, this.rightPaddle)) {
+        } else if (this.didLeftPlayerScore(this.ball, this.view.getWidth())) {
+            this.pauseGame();
+            this.leftPlayer.incrementScore();
+            this.ball.reset();
+            this.ball.reverseX();
+        } else if (this.didRightPlayerScore(this.ball, 0)) {
+            this.pauseGame();
+            this.rightPlayer.incrementScore();
+            this.ball.reset();
+            this.ball.reverseX();
+        } else if (this.didLeftPaddleHitBall(this.ball, this.leftPaddle) || this.didRightPaddleHitBall(this.ball, this.rightPaddle)) {
             this.ball.reverseX();
         }
     }
@@ -96,6 +131,13 @@ export default class Pong {
             && ball.getYPos() <= paddle.getBottomEdge());
     }
 
+    didLeftPlayerScore(ball, scoreLine) {
+        return this.ball.getLeftEdge() >= scoreLine;
+    }
+
+    didRightPlayerScore(ball, scoreLine) {
+        return this.ball.getRightEdge() <= scoreLine;
+    }
 
     setLeftPaddleDirection(direction) {
         this.leftPaddle.setDirection(direction);

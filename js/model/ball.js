@@ -1,6 +1,8 @@
 export default class Ball {
 
     angle; //in degrees
+    canvasHeight;
+    canvasWidth;
     radius;
     color;
     speed;
@@ -12,11 +14,12 @@ export default class Ball {
     constructor(canvasWidth, canvasHeight) {
 
         this.angle = 45;
+        this.canvasHeight = canvasHeight;
+        this.canvasWidth = canvasWidth;
         this.color = 'rgb(255, 255, 255)';
         this.radius = 5;
         this.speed = 8;
-        this.xPos = canvasWidth / 2;
-        this.yPos = canvasHeight / 2;
+        this.reset();
 
         const rad = this.degreesToRadians(this.angle)
         this.dx = this.speed * Math.cos(rad);
@@ -31,6 +34,11 @@ export default class Ball {
     move() {
         this.xPos += this.dx;
         this.yPos += this.dy;
+    }
+
+    reset() {
+        this.xPos = this.canvasWidth / 2;
+        this.yPos = this.canvasHeight / 2;
     }
 
     reverseX() {

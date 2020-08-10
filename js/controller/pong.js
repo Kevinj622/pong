@@ -4,9 +4,11 @@ import {LeftPaddle, RightPaddle} from '../model/paddle.js'
 import CanvasView from '../view/canvasView.js';
 import DIRECTION from '../model/direction.js';
 import Player from '../model/player.js';
+import pongAudio from '../model/pongAudio.js';
 
 export default class Pong {
-    WINNING_SCORE = 1;
+    audio;
+    WINNING_SCORE = 5;
     ball;
     net;
     leftPaddle;
@@ -19,6 +21,7 @@ export default class Pong {
     isGamePaused;
 
     constructor() {
+        this.audio = new pongAudio();
         this.view = new CanvasView(this);
 
         const viewWidth = this.view.getWidth();
@@ -29,7 +32,7 @@ export default class Pong {
         this.leftPaddle = new LeftPaddle(viewWidth, viewHeight);
         this.rightPaddle = new RightPaddle(viewWidth, viewHeight);
         this.leftPlayer = new Player(this.leftPaddle, this.WINNING_SCORE);
-        this.rightPlayer = new Player(this.rightPaddle), this.WINNING_SCORE;
+        this.rightPlayer = new Player(this.rightPaddle, this.WINNING_SCORE);
 
         this.pauseGame();
         this.draw();
@@ -90,18 +93,30 @@ export default class Pong {
         this.rightPaddle.move(DIRECTION.DOWN);
         
         if (this.didBallCollideWithBoundary(this.ball, this.view.getHeight(), 0)) {
+            this.audio.playHitBoundarySound();
             this.ball.reverseY();
         } else if (this.didLeftPlayerScore(this.ball, this.view.getWidth())) {
             this.pauseGame();
             this.leftPlayer.incrementScore();
+                    if(this.isGameOver()){
+                        this.audio.playGameOverSound();
+                    } else {
+                        this.audio.playScoreSound();
+                    }
             this.ball.reset();
             this.ball.reverseX();
         } else if (this.didRightPlayerScore(this.ball, 0)) {
             this.pauseGame();
             this.rightPlayer.incrementScore();
+            if(this.isGameOver()){
+                this.audio.playGameOverSound();
+            } else {
+                this.audio.playScoreSound();
+            }
             this.ball.reset();
             this.ball.reverseX();
         } else if (this.didLeftPaddleHitBall(this.ball, this.leftPaddle) || this.didRightPaddleHitBall(this.ball, this.rightPaddle)) {
+            this.audio.playHitPaddleSound();
             this.ball.reverseX();
         }
     }

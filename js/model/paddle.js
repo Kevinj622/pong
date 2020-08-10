@@ -17,6 +17,8 @@ class Paddle {
         this.width = canvasWidth * .01; //1% of the width
         this.yPos = (canvasHeight / 2) - (this.height / 2);
         this.speed = 8; //TODO make responsive
+
+        this.reset();
     }
 
 

@@ -7,28 +7,28 @@ export default class Ball {
     color;
     speed;
     dx; //change in x pos
-    dy; //change in y pos
+    dy; //change in y pos 
     xPos;
     yPos;
     
     constructor(canvasWidth, canvasHeight) {
 
+      
         this.canvasHeight = canvasHeight;
         this.canvasWidth = canvasWidth;
         this.color = 'rgb(255, 255, 255)';
         this.radius = 5;
-        this.speed = 5;
+        this.resetSpeed();
         this.reset();
       
     }
 
     getRandomAngle() {
-
         const MIN = 25;
         const MAX = 45;
         const randomAngle = ((Math.random()* (MAX - MIN)) + MIN);
         if(Math.random() < .5) {
-            360 - randomAngle;
+           return 360 - randomAngle;
         }
 
         return randomAngle;
@@ -36,6 +36,10 @@ export default class Ball {
 
     degreesToRadians(deg) {
         return (deg / 180) * Math.PI;
+    }
+
+    incrementSpeed() {
+        this.speed *= 1.1;
     }
 
     move() {
@@ -64,6 +68,10 @@ export default class Ball {
         this.dy = this.speed * Math.sin(rad);
         this.xPos = this.canvasWidth / 2;
         this.yPos = this.canvasHeight / 2;
+    }
+
+    resetSpeed() {
+        this.speed = this.canvasWidth * .00625;
     }
 
     reverseX() {

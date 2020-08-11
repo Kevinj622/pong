@@ -15,10 +15,9 @@ class Paddle {
         this.direction = DIRECTION.NONE;
         this.height = canvasHeight * .1; //10% of the view height
         this.width = canvasWidth * .01; //1% of the width
-        this.yPos = (canvasHeight / 2) - (this.height / 2);
         this.speed = 8; //TODO make responsive
 
-        this.reset();
+       this.reset();
     }
 
 
@@ -57,6 +56,11 @@ class Paddle {
            }
        }
     }
+
+    reset() {
+        this.yPos = (this.canvasHeight / 2) - (this.height / 2);
+    }
+
     setDirection(direction) {
         this.direction = direction;
     }
@@ -65,14 +69,23 @@ class Paddle {
 export class LeftPaddle extends Paddle {
     constructor(canvasWidth, canvasHeight){
         super(canvasWidth, canvasHeight);
+        this.reset();
+    }
+    reset() {
         this.xPos = 0 + (5 * this.width);
+        super.reset();
     }
 }
 
 export class RightPaddle extends Paddle{
+    canvasWidth;
     constructor(canvasWidth, canvasHeight) {
         super(canvasWidth, canvasHeight);
-        this.xPos = canvasWidth - (6 * this.width);
+        this.canvasWidth = canvasWidth;
+        this.reset();
     }
-
+    reset() {
+        this.xPos = this.canvasWidth - (6 * this.width);
+       super.reset();
+    }
 }

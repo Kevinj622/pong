@@ -96,25 +96,11 @@ export default class Pong {
             this.audio.playHitBoundarySound();
             this.ball.reverseY();
         } else if (this.didLeftPlayerScore(this.ball, this.view.getWidth())) {
-            this.pauseGame();
-            this.leftPlayer.incrementScore();
-                    if(this.isGameOver()){
-                        this.audio.playGameOverSound();
-                    } else {
-                        this.audio.playScoreSound();
-                    }
-            this.ball.reset();
-            this.ball.reverseX();
+            this.#playerScored(this.leftPlayer);
+            
         } else if (this.didRightPlayerScore(this.ball, 0)) {
-            this.pauseGame();
-            this.rightPlayer.incrementScore();
-            if(this.isGameOver()){
-                this.audio.playGameOverSound();
-            } else {
-                this.audio.playScoreSound();
-            }
-            this.ball.reset();
-            this.ball.reverseX();
+            this.#playerScored(this.rightPlayer);
+        
         } else if (this.didLeftPaddleHitBall(this.ball, this.leftPaddle) || this.didRightPaddleHitBall(this.ball, this.rightPaddle)) {
             this.audio.playHitPaddleSound();
             this.ball.reverseX();
@@ -128,13 +114,11 @@ export default class Pong {
     }
 
     didLeftPaddleHitBall(ball, paddle) {
-
         return (ball.getDX() < 0 //Left paddle
         && ball.getLeftEdge() >= paddle.getLeftEdge() 
         && ball.getLeftEdge() <= paddle.getRightEdge() 
         && ball.getYPos() >= paddle.getTopEdge()
         && ball.getYPos() <= paddle.getBottomEdge());
-
     }
 
     didRightPaddleHitBall(ball, paddle) {
@@ -152,6 +136,23 @@ export default class Pong {
 
     didRightPlayerScore(ball, scoreLine) {
         return this.ball.getRightEdge() <= scoreLine;
+    }
+
+    #playerScored(Player) {
+
+        this.pauseGame();
+        Player.incrementScore();
+        if(this.isGameOver()){
+            this.audio.playGameOverSound();
+            this.ball.resetSpeed();
+        } else {
+            this.audio.playScoreSound();
+            this.ball.incrementSpeed();
+        }
+        this.ball.reset();
+        this.ball.reverseX();
+        this.leftPaddle.reset();
+        this.rightPaddle.reset();
     }
 
     setLeftPaddleDirection(direction) {
